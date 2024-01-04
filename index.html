@@ -1,0 +1,88 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="index.css">
+        <script src="index.js" defer></script>
+    </head>
+    <body>
+        <h1 id="title">New Years Resolutions Tracker</h1>
+        <div id="goals-calendar-container">
+            <div id="goals-container">
+                <h2>Goals</h2>
+                <div id="goals">
+                    <h4>Daily</h4>
+                    <div class="goal-list">
+                        <p id="add-daily-goal" class="add-goal">+ Add Goal</p>
+                    </div>
+                    <h4>Weekly</h4>
+                    <div class="goal-list">
+                        <p id="add-weekly-goal" class="add-goal">+ Add Goal</p>
+                    </div>
+                    <h4>Monthly</h4>
+                    <div class="goal-list">
+                        <p id="add-monthly-goal" class="add-goal">+ Add Goal</p>
+                    </div>
+                    <h4>Year Long</h4>
+                    <div class="goal-list">
+                        <p id="add-year-long-goal" class="add-goal">+ Add Goal</p>
+                    </div>
+                </div>
+            </div>
+            <div id="calendar">
+                <div id="calendar-month-container">
+                    <button id="last-month-button">&lt</button>
+                    <input id="calendar-month" type="month"/>
+                    <button id="next-month-button">&gt</button>
+                    <select id="calendar-progress-toggle">
+                        <option value="calendar">Calendar View</option>
+                        <option value="progress">Progress View</option>
+                    </select>
+                </div>
+                <div id="week-names">
+                    <div>Sunday</div>
+                    <div>Monday</div>
+                    <div>Tueday</div>
+                    <div>Wednesday</div>
+                    <div>Thursday</div>
+                    <div>Friday</div>
+                    <div>Saturday</div>
+                </div>
+                <div id="calendar-grid"></div>
+            </div>
+        </div>
+        <div id="progress-calendar-container">
+            <div id="goals-container">
+                <h2>Goals</h2>
+                <div id="goals">
+                    <h4>Daily</h4>
+                    <div class="goal-list">
+                        <p>Goal 1</p>
+                    </div>
+                    <h4>Weekly</h4>
+                    <div class="goal-list">
+                        <p>Goal 2</p>
+                    </div>
+                    <h4>Monthly</h4>
+                    <div class="goal-list">
+                        <p>Goal 3</p>
+                    </div>
+                    <h4>Year Long</h4>
+                    <div class="goal-list">
+                        <p>Goal 4</p>
+                    </div>
+                </div>
+            </div>
+            <div id="progress">
+                <div id="progress-type-container">
+                    <h2>Progress</h2>
+                    <select id="calendar-progress-toggle2">
+                        <option value="calendar">Calendar View</option>
+                        <option value="progress">Progress View</option>
+                    </select>
+                </div>
+                <div id="progress-grid">
+                    
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
