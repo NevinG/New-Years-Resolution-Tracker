@@ -4,9 +4,10 @@ body{
     box-sizing: border-box;
     height: calc(100% - 16px);
     width: calc(100% - 16px);
+    color:white;
 }
 
-input{
+input, select{
     color-scheme: dark;
 }
 
@@ -19,11 +20,15 @@ input{
 }
 
 .goal-list > p{
-    margin: 5px 0px 5px 25px;
+    margin: 5px 0px 5px 24px;
+}
+
+.goal-list > div{
+    margin: 5px 0px 5px 12px;
 }
 
 .goal-input{
-    margin: 5px 0px 5px 25px;
+    margin: 5px 0px 5px 24px;
     padding:inherit;
     font: inherit;
     color: inherit;
@@ -36,11 +41,35 @@ input{
     cursor:pointer;
 }
 
-#title{
-    text-align: center;
+/* color picker styles */
+input[type="color"] {
+    margin-left: 15px;
+    width: 15px;
+    height: 15px;
+    padding: 0;
+}
+input[type="color"]::-moz-color-swatch {
+    border: none;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+    border: none;
 }
 
-#goals-calendar-container, #progress-calendar-container{
+.progress-goal{
+    display: flex;
+    align-items: center;
+}
+
+#title{
+    text-align: center;
+    margin-bottom: 0;
+}
+
+#goals-calendar-container{
     display:flex;
 }
 
@@ -91,7 +120,7 @@ input{
 #calendar-month{
     text-align: center;
     width: 20%;
-    
+
     background: none;
 	color: inherit;
 	border: none;
@@ -130,9 +159,9 @@ input{
 }
 
 #progress-grid{
-    margin: 50px auto;
+    margin: 0px auto;
     display: grid;
-    grid-template: repeat(7,1fr) / repeat(53, 1fr);
+    grid-template: repeat(14,1fr) / repeat(27, 1fr);
 }
 
 #progress-day{
@@ -140,4 +169,6 @@ input{
     margin:1px;
     aspect-ratio: 1;
     background-color: green;
+    display: flex;
 }
+
