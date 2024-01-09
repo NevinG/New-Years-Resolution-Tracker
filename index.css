@@ -11,6 +11,10 @@ input, select{
     color-scheme: dark;
 }
 
+.progress-goal{
+    width: 100%;
+}
+
 .current-cal-day{
     background-color: darkgray;
 }
@@ -19,15 +23,31 @@ input, select{
     background-color: gray;
 }
 
+.delete-goal{
+    margin: 4px;
+}
+
 .goal-list > p{
     margin: 5px 0px 5px 24px;
 }
 
-.goal-list > div{
+/* .goal-list > div{
     margin: 5px 0px 5px 12px;
+} */
+
+.goal-input-quantity{
+    width: 30px;
+    padding:inherit;
+    font: inherit;
+    /* color: inherit; */
+    /* background-color: inherit; */
+    /* border: none; */
+    /* outline: none; */
+
 }
 
 .goal-input{
+    width: calc(100% - 100px);
     margin: 5px 0px 5px 24px;
     padding:inherit;
     font: inherit;
@@ -73,7 +93,7 @@ input[type="color"]::-webkit-color-swatch {
     display:flex;
 }
 
-#goals-container{
+#goals-container, #progress-goals-container, #popup-goals-container{
     width: 30%;
     height: 500px;
     display: flex;
@@ -106,7 +126,7 @@ input[type="color"]::-webkit-color-swatch {
     width:100%;
 }
 
-#progress-type-container > h2{
+#progress-type-container{
     margin: 5px;
 }
 
@@ -168,7 +188,25 @@ input[type="color"]::-webkit-color-swatch {
     border-radius: 1px;
     margin:1px;
     aspect-ratio: 1;
-    background-color: green;
+    border: 1px solid black;
     display: flex;
 }
+
+#cal-popup{
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: transparent;
+    left: 0;
+    top: 0;
+}
+
+#cal-popup > div{
+    width: 50%;
+    height: 100%;
+    margin: auto;
+    background-color: gray;
+}
+
 
