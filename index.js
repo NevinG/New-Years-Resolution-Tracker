@@ -22,57 +22,69 @@ const popupMonthlyProgressGoalList = document.getElementById("popup-monthly-prog
 const popupYearlyProgressGoalList = document.getElementById("popup-yearly-progress-goal-list");
 const calPopup = document.getElementById("cal-popup");
 const popupGoalsContainer = document.getElementById("popup-goals-container");
+const progressLastYearButton = document.getElementById("progress-last-year-button");
+const progressNextYearButton = document.getElementById("progress-next-year-button");
+const progressYearButton = document.getElementById("progress-year-button");
 
 //global variables
 // localStorage.setItem("goals", JSON.stringify({
-//     "daily":[
-//         {
-//             "goal": "goal 1",
-//             "quantity": 1,
-//             "progressColor": "green", 
-//             "progressToggled": true,
-//             "calendarDates":{
-//                 "YYYY-MM-DD": 1,
+//     "YYYY":{
+//         "daily":[
+//             {
+//                 "goal": "goal 1",
+//                 "quantity": 1,
+//                 "progressColor": "green", 
+//                 "progressToggled": true,
+//                 "calendarDates":{
+//                     "YYYY-MM-DD": 1,
+//                 }
 //             }
-//         }
-//     ],
-//     "weekly":[
-//         {
-//             "goal": "goal 2",
-//             "quantity": 1,
-//             "progressColor": "green",
-//             "progressToggled": true,
-//             "calendarDates":{
-//                 "YYYY-MM-DD": 1,
+//         ],
+//         "weekly":[
+//             {
+//                 "goal": "goal 2",
+//                 "quantity": 1,
+//                 "progressColor": "green",
+//                 "progressToggled": true,
+//                 "calendarDates":{
+//                     "YYYY-MM-DD": 1,
+//                 }
 //             }
-//         }
-//     ],
-//     "monthly":[
-//         {
-//             "goal": "goal 3",
-//             "quantity": 1,
-//             "progressColor": "green",
-//             "progressToggled": true,
-//             "calendarDates":{
-//                 "YYYY-MM-DD": 1,
+//         ],
+//         "monthly":[
+//             {
+//                 "goal": "goal 3",
+//                 "quantity": 1,
+//                 "progressColor": "green",
+//                 "progressToggled": true,
+//                 "calendarDates":{
+//                     "YYYY-MM-DD": 1,
+//                 }
 //             }
-//         }
-//     ],
-//     "yearly":[
-//         {
-//             "goal": "goal 4",
-//             "quantity": 1,
-//             "progressColor": "green",
-//             "progressToggled": true,
-//             "calendarDates":{
-//                 "YYYY-MM-DD": 1,
+//         ],
+//         "yearly":[
+//             {
+//                 "goal": "goal 4",
+//                 "quantity": 1,
+//                 "progressColor": "green",
+//                 "progressToggled": true,
+//                 "calendarDates":{
+//                     "YYYY-MM-DD": 1,
+//                 }
 //             }
-//         }
-//     ]
+//         ]
+//     }
 // }));
+const defaultYearlyGoalsObject = {
+    "daily": [],
+    "weekly": [],
+    "monthly": [],
+    "yearly": []
+}
+let curCalYear = undefined;
 
-let goals = JSON.parse(localStorage.getItem("goals"));
-console.log(goals);
+let goals = JSON.parse(localStorage.getItem("goals")) ?? {};
+//console.log(goals);
 
 //get current date
 getInitialMonth();
@@ -80,6 +92,9 @@ getInitialMonth();
 //event-handlers
 lastMonth.onclick = clickLastMonth;
 nextMonth.onclick = clickNextMonth;
+
+progressLastYearButton.onclick= clickLastYear;
+progressNextYearButton.onclick= clickNextYear;
 
 addDailyGoal.onclick= clickAddDailyGoal;
 addWeeklyGoal.onclick= clickAddWeeklyGoal;
@@ -97,10 +112,12 @@ function changedCalendarProgressToggle(e){
     if(e.target.value == "calendar"){
         calendarContainer.style.display = "flex";
         progressContainer.style.display = "none";
+        updateCalendar();
     }
     else if(e.target.value == "progress"){
         calendarContainer.style.display = "none";
         progressContainer.style.display = "flex";
+        progressYearButton.value = curCalYear;
         updateProgress();
     }
     calendarProgressToggle2.value = e.target.value;
@@ -108,6 +125,10 @@ function changedCalendarProgressToggle(e){
 }
 
 function updateCalendar(){
+    //get new year of the calendar
+    let newDate = new Date(calendarMonthInput.value + "-01T08:00:00.000Z");
+    curCalYear = newDate.getFullYear();
+
     //reset them all
     calendarGrid.innerHTML = null;
     for(let i = 0; i < 42; i++){
@@ -136,11 +157,13 @@ function updateCalendar(){
         calendarDaysGoalIndicatorContainer.className = "calendar-day-goal-indicator-container";
         days[lastIndex].appendChild(calendarDaysGoalIndicatorContainer);
         ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
-            for(let j = 0; j < goals[goalType].length; j++){
-                if((goals[goalType][j]["calendarDates"][days[lastIndex].calDate] ?? 0) > 0){
-                    const childDiv = document.createElement("div");
-                    childDiv.className = "calendar-day-goal-indicator";
-                    days[lastIndex].children[0].appendChild(childDiv);
+            if(goals[curCalYear]){
+                for(let j = 0; j < goals[curCalYear][goalType].length; j++){
+                    if((goals[curCalYear][goalType][j]["calendarDates"][days[lastIndex].calDate] ?? 0) > 0){
+                        const childDiv = document.createElement("div");
+                        childDiv.className = "calendar-day-goal-indicator";
+                        days[lastIndex].children[0].appendChild(childDiv);
+                    }
                 }
             }
         });
@@ -163,6 +186,8 @@ function updateCalendar(){
         days[i].onclick = undefined;
         days[i].className = "other-cal-day";
     }
+
+    loadGoals();
 }
 
 function updateProgress(){
@@ -172,56 +197,59 @@ function updateProgress(){
     monthlyProgressGoalList.innerHTML = '';
     yearlyProgressGoalList.innerHTML = '';
     ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
-        for(let i = 0; i < goals[goalType].length; i++){
-            let goal = document.createElement("div");
-            goal.className="progress-goal";
-    
-            let goalToggleInput = document.createElement("input");
-            goalToggleInput.type = "checkbox";
-            goalToggleInput.onchange= (e) => {
-                goals[goalType][i]["progressToggled"] = e.target.checked;
-                saveGoals();
-                updateProgressGoals();
+        if(goals[curCalYear]){
+            for(let i = 0; i < goals[curCalYear][goalType].length; i++){
+                let goal = document.createElement("div");
+                goal.className="progress-goal";
+        
+                let goalToggleInput = document.createElement("input");
+                goalToggleInput.type = "checkbox";
+                goalToggleInput.onchange= (e) => {
+                    goals[curCalYear][goalType][i]["progressToggled"] = e.target.checked;
+                    saveGoals();
+                    updateProgressGoals();
+                }
+                goalToggleInput.checked = goals[curCalYear][goalType][i]["progressToggled"];
+        
+                let goalText = document.createElement("span");
+                goalText.innerHTML = goals[curCalYear][goalType][i]["goal"];
+        
+                let goalColorInput = document.createElement("input");
+                goalColorInput.type = "color";
+                goalColorInput.className = "goal-color-picker";
+                goalColorInput.value = goals[curCalYear][goalType][i]["progressColor"];
+                goalColorInput.onchange = (e) => {
+                    goals[curCalYear][goalType][i]["progressColor"] = e.target.value;
+                    saveGoals();
+                    updateProgressGoals();
+                }
+        
+                goal.appendChild(goalToggleInput);
+                goal.appendChild(goalText);
+                goal.appendChild(goalColorInput);
+                
+                switch(goalType){
+                    case "daily":
+                        dailyProgressGoalList.appendChild(goal);
+                        break;
+                    case "weekly":
+                        weeklyProgressGoalList.appendChild(goal);
+                        break;
+                    case "monthly":
+                        monthlyProgressGoalList.appendChild(goal);
+                        break;
+                    case "yearly":
+                        yearlyProgressGoalList.appendChild(goal);
+                        break;
+                };
             }
-            goalToggleInput.checked = goals[goalType][i]["progressToggled"];
-    
-            let goalText = document.createElement("span");
-            goalText.innerHTML = goals[goalType][i]["goal"];
-    
-            let goalColorInput = document.createElement("input");
-            goalColorInput.type = "color";
-            goalColorInput.className = "goal-color-picker";
-            goalColorInput.value = goals[goalType][i]["progressColor"];
-            goalColorInput.onchange = (e) => {
-                goals[goalType][i]["progressColor"] = e.target.value;
-                saveGoals();
-                updateProgressGoals();
-            }
-    
-            goal.appendChild(goalToggleInput);
-            goal.appendChild(goalText);
-            goal.appendChild(goalColorInput);
-            
-            switch(goalType){
-                case "daily":
-                    dailyProgressGoalList.appendChild(goal);
-                    break;
-                case "weekly":
-                    weeklyProgressGoalList.appendChild(goal);
-                    break;
-                case "monthly":
-                    monthlyProgressGoalList.appendChild(goal);
-                    break;
-                case "yearly":
-                    yearlyProgressGoalList.appendChild(goal);
-                    break;
-            };
         }
     });
 
     //add each progress day element
     progressGrid.innerHTML = '';
     let date = new Date();
+    date.setFullYear(parseInt(progressYearButton.value));
     const year = date.getFullYear();
     date.setMonth(0);
     date.setDate(1);
@@ -240,12 +268,14 @@ function updateProgress(){
     const progressDays = progressGrid.children;
     for(let i = 0; i < progressDays.length; i++){
         ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
-            for(let j = 0; j < goals[goalType].length; j++){
-                let progressGoal = document.createElement("div");
-                progressGoal.className = "progress-goal";
-                progressGoal.style.backgroundColor = goals[goalType][j]["progressColor"];
-                progressGoal.style.display = goals[goalType][j]["progressToggled"] ? "block" : "none";
-                progressDays[i].appendChild(progressGoal);
+            if(goals[curCalYear]){
+                for(let j = 0; j < goals[curCalYear][goalType].length; j++){
+                    let progressGoal = document.createElement("div");
+                    progressGoal.className = "progress-goal";
+                    progressGoal.style.backgroundColor = goals[curCalYear][goalType][j]["progressColor"];
+                    progressGoal.style.display = goals[curCalYear][goalType][j]["progressToggled"] ? "block" : "none";
+                    progressDays[i].appendChild(progressGoal);
+                }
             }
         });
     }
@@ -258,76 +288,78 @@ function updateProgressGoals(){
     for(let i = 0; i < progressDays.length; i++){
         let goalIndex = 0;
         ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
-            for(let j = 0; j < goals[goalType].length; j++){
-                //check if goal is completed
-                if(goalType == "daily"){
-                    //calculate total quantity to this point
-                    let quantity = goals[goalType][j]["calendarDates"][progressDays[i].date]
-                    if( quantity >= goals[goalType][j].quantity)
-                        progressDays[i].children[goalIndex].style.backgroundColor = goals[goalType][j]["progressColor"];
-                    else
-                        progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
-                }
-                else if(goalType == "weekly"){
-                    //calculate total quantity to this point
-                    let quantity = 0;
-                    let testDate = new Date();
-                    testDate.setFullYear(progressDays[i].date.substring(0,4));
-                    testDate.setMonth(parseInt(progressDays[i].date.substring(5,7)) - 1);
-                    testDate.setDate(progressDays[i].date.substring(8,10));
-                    testDate.setDate(testDate.getDate() - testDate.getDay());
-                    testDate.setHours(0);
-                    for(let k = 0; k < 7; k++){
-                        quantity += goals[goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
-                        testDate.setDate(testDate.getDate() + 1);
+            if(goals[curCalYear]){
+                for(let j = 0; j < goals[curCalYear][goalType].length; j++){
+                    //check if goal is completed
+                    if(goalType == "daily"){
+                        //calculate total quantity to this point
+                        let quantity = goals[curCalYear][goalType][j]["calendarDates"][progressDays[i].date]
+                        if( quantity >= goals[curCalYear][goalType][j].quantity)
+                            progressDays[i].children[goalIndex].style.backgroundColor = goals[curCalYear][goalType][j]["progressColor"];
+                        else
+                            progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
                     }
-                    if( quantity >= goals[goalType][j].quantity)
-                        progressDays[i].children[goalIndex].style.backgroundColor = goals[goalType][j]["progressColor"];
-                    else
-                        progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
-                }
-                else if(goalType == "monthly"){
-                    //calculate total quantity to this point
-                    let quantity = 0;
-                    let testDate = new Date();
-                    testDate.setFullYear(progressDays[i].date.substring(0,4));
-                    testDate.setMonth(parseInt(progressDays[i].date.substring(5,7)) - 1);
-                    testDate.setDate(progressDays[i].date.substring(8,10));
-                    testDate.setDate(1);
-                    testDate.setHours(0);
-                    const month = testDate.getMonth();
-                    while(month == testDate.getMonth()){
-                        quantity += goals[goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
-                        testDate.setDate(testDate.getDate() + 1);
+                    else if(goalType == "weekly"){
+                        //calculate total quantity to this point
+                        let quantity = 0;
+                        let testDate = new Date();
+                        testDate.setFullYear(progressDays[i].date.substring(0,4));
+                        testDate.setMonth(parseInt(progressDays[i].date.substring(5,7)) - 1);
+                        testDate.setDate(progressDays[i].date.substring(8,10));
+                        testDate.setDate(testDate.getDate() - testDate.getDay());
+                        testDate.setHours(0);
+                        for(let k = 0; k < 7; k++){
+                            quantity += goals[curCalYear][goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
+                            testDate.setDate(testDate.getDate() + 1);
+                        }
+                        if( quantity >= goals[curCalYear][goalType][j].quantity)
+                            progressDays[i].children[goalIndex].style.backgroundColor = goals[curCalYear][goalType][j]["progressColor"];
+                        else
+                            progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
                     }
-                    if(quantity >= goals[goalType][j].quantity)
-                        progressDays[i].children[goalIndex].style.backgroundColor = goals[goalType][j]["progressColor"];
-                    else
-                        progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
-                }
-                else if(goalType == "yearly"){
-                    //calculate total quantity to this point
-                    let quantity = 0;
-                    let testDate = new Date();
-                    testDate.setFullYear(progressDays[i].date.substring(0,4));
-                    testDate.setMonth(parseInt(progressDays[i].date.substring(5,7)) - 1);
-                    testDate.setDate(progressDays[i].date.substring(8,10));
-                    testDate.setDate(1);
-                    testDate.setMonth(0);
-                    testDate.setHours(0);
-                    const year = testDate.getFullYear();
-                    while(year == testDate.getFullYear()){
-                        quantity += goals[goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
-                        testDate.setDate(testDate.getDate() + 1);
+                    else if(goalType == "monthly"){
+                        //calculate total quantity to this point
+                        let quantity = 0;
+                        let testDate = new Date();
+                        testDate.setFullYear(progressDays[i].date.substring(0,4));
+                        testDate.setMonth(parseInt(progressDays[i].date.substring(5,7)) - 1);
+                        testDate.setDate(progressDays[i].date.substring(8,10));
+                        testDate.setDate(1);
+                        testDate.setHours(0);
+                        const month = testDate.getMonth();
+                        while(month == testDate.getMonth()){
+                            quantity += goals[curCalYear][goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
+                            testDate.setDate(testDate.getDate() + 1);
+                        }
+                        if(quantity >= goals[curCalYear][goalType][j].quantity)
+                            progressDays[i].children[goalIndex].style.backgroundColor = goals[curCalYear][goalType][j]["progressColor"];
+                        else
+                            progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
                     }
-                    if(quantity >= goals[goalType][j].quantity)
-                        progressDays[i].children[goalIndex].style.backgroundColor = goals[goalType][j]["progressColor"];
-                    else
-                        progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
+                    else if(goalType == "yearly"){
+                        //calculate total quantity to this point
+                        let quantity = 0;
+                        let testDate = new Date();
+                        testDate.setFullYear(progressDays[i].date.substring(0,4));
+                        testDate.setMonth(parseInt(progressDays[i].date.substring(5,7)) - 1);
+                        testDate.setDate(progressDays[i].date.substring(8,10));
+                        testDate.setDate(1);
+                        testDate.setMonth(0);
+                        testDate.setHours(0);
+                        const year = testDate.getFullYear();
+                        while(year == testDate.getFullYear()){
+                            quantity += goals[curCalYear][goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
+                            testDate.setDate(testDate.getDate() + 1);
+                        }
+                        if(quantity >= goals[curCalYear][goalType][j].quantity)
+                            progressDays[i].children[goalIndex].style.backgroundColor = goals[curCalYear][goalType][j]["progressColor"];
+                        else
+                            progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
+                    }
+                    
+                    progressDays[i].children[goalIndex].style.display = goals[curCalYear][goalType][j]["progressToggled"] ? "block" : "none";
+                    goalIndex++;
                 }
-                
-                progressDays[i].children[goalIndex].style.display = goals[goalType][j]["progressToggled"] ? "block" : "none";
-                goalIndex++;
             }
         });
     }
@@ -341,9 +373,22 @@ function getInitialMonth(){
     date.setSeconds(0);
     date.setMilliseconds(0);
     calendarMonthInput.value = date.toISOString().substring(0,7);
+    curCalYear = date.getFullYear();
+    progressYearButton.value = new Date().getFullYear();
     updateCalendar();
     updateProgress();
-    loadGoals();
+}
+
+function clickLastYear(){
+    progressYearButton.value = parseInt(progressYearButton.value) - 1;
+    curCalYear = progressYearButton.value;
+    updateProgress();
+}
+
+function clickNextYear(){
+    progressYearButton.value = parseInt(progressYearButton.value) + 1;
+    curCalYear = progressYearButton.value;
+    updateProgress();
 }
 
 function clickLastMonth(){
@@ -375,31 +420,31 @@ function clickCalendarDay(e){
     
     //add goals to the popup
     ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
-        for(let i = 0; i < goals[goalType].length; i++){
+        for(let i = 0; i < goals[curCalYear][goalType].length; i++){
             let goal = document.createElement("div");
             goal.className="progress-goal";
     
             let goalToggleInput = document.createElement("input");
             goalToggleInput.type = "checkbox";
-            goalToggleInput.checked = (goals[goalType][i]["calendarDates"][clickedOnDate] ?? 0) > 0; //TODO logic for this
+            goalToggleInput.checked = (goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] ?? 0) > 0; //TODO logic for this
             goalToggleInput.goalType = goalType;
             goalToggleInput.goalIndex = i;
 
             let goalInputQuantity = document.createElement("input");
             goalInputQuantity.className = "goal-input-quantity-popup";
             goalInputQuantity.type = "number";
-            goalInputQuantity.value = goals[goalType][i]["calendarDates"][clickedOnDate] ?? 0
+            goalInputQuantity.value = goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] ?? 0
             goalInputQuantity.disabled = !goalToggleInput.checked;
             goalInputQuantity.onchange = (e) => {
                 if(goalInputQuantity.value == 0)
                     goalToggleInput.checked = false;
-                goals[goalType][i]["calendarDates"][clickedOnDate] = parseInt(goalInputQuantity.value);
+                    goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] = parseInt(goalInputQuantity.value);
                 saveGoals();
             }
 
             goalToggleInput.onchange= () => {
                 goalInputQuantity.value = goalToggleInput.checked ? goalInputQuantity.value == 0 ? 1 : goalInputQuantity.value : 0;
-                goals[goalType][i]["calendarDates"][clickedOnDate] = parseInt(goalInputQuantity.value);
+                goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] = parseInt(goalInputQuantity.value);
                 goalInputQuantity.disabled = !goalToggleInput.checked;
 
                 //change day goal indicators
@@ -414,7 +459,7 @@ function clickCalendarDay(e){
             };
     
             let goalText = document.createElement("span");
-            goalText.innerHTML = goals[goalType][i]["goal"];
+            goalText.innerHTML = goals[curCalYear][goalType][i]["goal"];
     
             goal.appendChild(goalToggleInput);
             goal.appendChild(goalText);
@@ -439,34 +484,51 @@ function clickCalendarDay(e){
 }
 
 function loadGoals(){
+    //remove all old goals
+    while(addDailyGoal.parentElement.childElementCount > 1){
+        addDailyGoal.parentElement.children[0].remove()
+    }
+    while(addWeeklyGoal.parentElement.childElementCount > 1){
+        addWeeklyGoal.parentElement.children[0].remove()
+    }
+    while(addMonthlyGoal.parentElement.childElementCount > 1){
+        addMonthlyGoal.parentElement.children[0].remove()
+    }
+    while(addYearLongGoal.parentElement.childElementCount > 1){
+        addYearLongGoal.parentElement.children[0].remove()
+    }
+
+    if(!goals[curCalYear])
+        return;
+
     //daily
-    for(let i = 0; i < goals["daily"].length; i++){
+    for(let i = 0; i < goals[curCalYear]["daily"].length; i++){
         let goal = document.createElement("p");
-        goal.innerHTML = goals["daily"][i]["goal"] == '' ? "new goal" : goals["daily"][i]["goal"];
+        goal.innerHTML = goals[curCalYear]["daily"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["daily"][i]["goal"];
         goal.onclick = editGoal;
         goal.goalType = "daily";
         addDailyGoal.parentElement.insertBefore(goal, addDailyGoal);
     }
     //weekly
-    for(let i = 0; i < goals["weekly"].length; i++){
+    for(let i = 0; i < goals[curCalYear]["weekly"].length; i++){
         let goal = document.createElement("p");
-        goal.innerHTML = goals["weekly"][i]["goal"] == '' ? "new goal" : goals["weekly"][i]["goal"];
+        goal.innerHTML = goals[curCalYear]["weekly"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["weekly"][i]["goal"];
         goal.onclick = editGoal;
         goal.goalType = "weekly";
         addWeeklyGoal.parentElement.insertBefore(goal, addWeeklyGoal);
     }
     //monthly
-    for(let i = 0; i < goals["monthly"].length; i++){
+    for(let i = 0; i < goals[curCalYear]["monthly"].length; i++){
         let goal = document.createElement("p");
-        goal.innerHTML = goals["monthly"][i]["goal"] == '' ? "new goal" : goals["monthly"][i]["goal"];
+        goal.innerHTML = goals[curCalYear]["monthly"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["monthly"][i]["goal"];
         goal.onclick = editGoal;
         goal.goalType = "monthly";
         addMonthlyGoal.parentElement.insertBefore(goal, addMonthlyGoal);
     }
     //yearly
-    for(let i = 0; i < goals["yearly"].length; i++){
+    for(let i = 0; i < goals[curCalYear]["yearly"].length; i++){
         let goal = document.createElement("p");
-        goal.innerHTML = goals["yearly"][i]["goal"] == '' ? "new goal" : goals["yearly"][i]["goal"];
+        goal.innerHTML = goals[curCalYear]["yearly"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["yearly"][i]["goal"];
         goal.onclick = editGoal;
         goal.goalType = "yearly";
         addYearLongGoal.parentElement.insertBefore(goal, addYearLongGoal);
@@ -481,8 +543,8 @@ function confirmGoal(e){
     const index = Array.from(goalDiv.parentElement.children).indexOf(goalDiv);
 
     //edit goals object
-    goals[goalInput.goalType][index]["goal"] = goalInput.value;
-    goals[goalInput.goalType][index]["quantity"] = parseInt(goalQuantityInput.value);
+    goals[curCalYear][goalInput.goalType][index]["goal"] = goalInput.value;
+    goals[curCalYear][goalInput.goalType][index]["quantity"] = parseInt(goalQuantityInput.value);
     saveGoals();
 
     e.target.removeEventListener("focusout", confirmGoal);
@@ -518,7 +580,7 @@ function editGoal(e){
     newGoalSpan.innerHTML = "#";
 
     newGoalQuantity.className = "goal-input-quantity";
-    newGoalQuantity.value = goals[e.target.goalType][index]["quantity"];
+    newGoalQuantity.value = goals[curCalYear][e.target.goalType][index]["quantity"];
     newGoalQuantity.type = "number";
     newGoalQuantity.addEventListener("focusout", confirmGoal);
     newGoalQuantity.onmouseenter = () =>{
@@ -551,7 +613,7 @@ function deleteGoal(e){
     e.target.parentElement.remove();
 
     //remove from goals object
-    goals[e.target.goalType].splice(index,1);
+    goals[curCalYear][e.target.goalType].splice(index,1);
     saveGoals();
 }
 
@@ -567,7 +629,10 @@ function clickAddDailyGoal(){
     addDailyGoal.parentElement.insertBefore(goal, addDailyGoal);
 
     //add in goals object
-    goals["daily"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    if(!goals[curCalYear]){
+        goals[curCalYear] = JSON.parse(JSON.stringify(defaultYearlyGoalsObject));
+    }
+    goals[curCalYear]["daily"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
     saveGoals();
 }
 
@@ -579,7 +644,7 @@ function clickAddWeeklyGoal(){
     addWeeklyGoal.parentElement.insertBefore(goal, addWeeklyGoal);
 
     //add in goals object
-    goals["weekly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    goals[curCalYear]["weekly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
 }
 
 function clickAddMonthlyGoal(){
@@ -590,7 +655,7 @@ function clickAddMonthlyGoal(){
     addMonthlyGoal.parentElement.insertBefore(goal, addMonthlyGoal);
 
     //add in goals object
-    goals["monthly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    goals[curCalYear]["monthly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
 }
 
 function clickAddYearLongGoal(){
@@ -601,7 +666,7 @@ function clickAddYearLongGoal(){
     addYearLongGoal.parentElement.insertBefore(goal, addYearLongGoal);
 
     //add in goals object
-    goals["yearly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    goals[curCalYear]["yearly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
 }
 
 function randomColor(){
