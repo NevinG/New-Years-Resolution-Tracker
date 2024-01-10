@@ -294,10 +294,14 @@ function updateProgressGoals(){
                     if(goalType == "daily"){
                         //calculate total quantity to this point
                         let quantity = goals[curCalYear][goalType][j]["calendarDates"][progressDays[i].date]
-                        if( quantity >= goals[curCalYear][goalType][j].quantity)
+                        if( quantity >= goals[curCalYear][goalType][j].quantity){
                             progressDays[i].children[goalIndex].style.backgroundColor = goals[curCalYear][goalType][j]["progressColor"];
-                        else
+                            progressDays[i].children[goalIndex].style.display = "block";
+                        }
+                        else{
                             progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
+                            progressDays[i].children[goalIndex].style.display = "none";
+                        }
                     }
                     else if(goalType == "weekly"){
                         //calculate total quantity to this point
@@ -312,10 +316,14 @@ function updateProgressGoals(){
                             quantity += goals[curCalYear][goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
                             testDate.setDate(testDate.getDate() + 1);
                         }
-                        if( quantity >= goals[curCalYear][goalType][j].quantity)
+                        if( quantity >= goals[curCalYear][goalType][j].quantity){
                             progressDays[i].children[goalIndex].style.backgroundColor = goals[curCalYear][goalType][j]["progressColor"];
-                        else
+                            progressDays[i].children[goalIndex].style.display = "block";
+                        }
+                        else{
                             progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
+                            progressDays[i].children[goalIndex].style.display = "none";
+                        }
                     }
                     else if(goalType == "monthly"){
                         //calculate total quantity to this point
@@ -331,10 +339,14 @@ function updateProgressGoals(){
                             quantity += goals[curCalYear][goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
                             testDate.setDate(testDate.getDate() + 1);
                         }
-                        if(quantity >= goals[curCalYear][goalType][j].quantity)
+                        if( quantity >= goals[curCalYear][goalType][j].quantity){
                             progressDays[i].children[goalIndex].style.backgroundColor = goals[curCalYear][goalType][j]["progressColor"];
-                        else
+                            progressDays[i].children[goalIndex].style.display = "block";
+                        }
+                        else{
                             progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
+                            progressDays[i].children[goalIndex].style.display = "none";
+                        }
                     }
                     else if(goalType == "yearly"){
                         //calculate total quantity to this point
@@ -351,13 +363,17 @@ function updateProgressGoals(){
                             quantity += goals[curCalYear][goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
                             testDate.setDate(testDate.getDate() + 1);
                         }
-                        if(quantity >= goals[curCalYear][goalType][j].quantity)
+                        if( quantity >= goals[curCalYear][goalType][j].quantity){
                             progressDays[i].children[goalIndex].style.backgroundColor = goals[curCalYear][goalType][j]["progressColor"];
-                        else
+                            progressDays[i].children[goalIndex].style.display = "block";
+                        }
+                        else{
                             progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
+                            progressDays[i].children[goalIndex].style.display = "none";
+                        }
                     }
                     
-                    progressDays[i].children[goalIndex].style.display = goals[curCalYear][goalType][j]["progressToggled"] ? "block" : "none";
+                    progressDays[i].children[goalIndex].style.display = goals[curCalYear][goalType][j]["progressToggled"] ? progressDays[i].children[goalIndex].style.display : "none";
                     goalIndex++;
                 }
             }
