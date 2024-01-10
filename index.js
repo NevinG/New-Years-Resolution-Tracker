@@ -222,10 +222,16 @@ function updateProgress(){
     //add each progress day element
     progressGrid.innerHTML = '';
     let date = new Date();
-    for(let i = 0; i < daysInYear(date.getFullYear()); i++){
+    const year = date.getFullYear();
+    date.setMonth(0);
+    date.setDate(1);
+    date.setHours(0);
+    while(date.getFullYear() == year){
         let progressDay = document.createElement("div");
         progressDay.id = "progress-day";
+        progressDay.date = date.toISOString().substring(0,10);
         progressGrid.appendChild(progressDay);
+        date.setDate(date.getDate() + 1);
     }
 
     //get the selected goals
@@ -253,16 +259,78 @@ function updateProgressGoals(){
         let goalIndex = 0;
         ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
             for(let j = 0; j < goals[goalType].length; j++){
-                progressDays[i].children[goalIndex].style.backgroundColor = goals[goalType][j]["progressColor"];
+                //check if goal is completed
+                if(goalType == "daily"){
+                    //calculate total quantity to this point
+                    let quantity = goals[goalType][j]["calendarDates"][progressDays[i].date]
+                    if( quantity >= goals[goalType][j].quantity)
+                        progressDays[i].children[goalIndex].style.backgroundColor = goals[goalType][j]["progressColor"];
+                    else
+                        progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
+                }
+                else if(goalType == "weekly"){
+                    //calculate total quantity to this point
+                    let quantity = 0;
+                    let testDate = new Date();
+                    testDate.setFullYear(progressDays[i].date.substring(0,4));
+                    testDate.setMonth(parseInt(progressDays[i].date.substring(5,7)) - 1);
+                    testDate.setDate(progressDays[i].date.substring(8,10));
+                    testDate.setDate(testDate.getDate() - testDate.getDay());
+                    testDate.setHours(0);
+                    for(let k = 0; k < 7; k++){
+                        quantity += goals[goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
+                        testDate.setDate(testDate.getDate() + 1);
+                    }
+                    if( quantity >= goals[goalType][j].quantity)
+                        progressDays[i].children[goalIndex].style.backgroundColor = goals[goalType][j]["progressColor"];
+                    else
+                        progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
+                }
+                else if(goalType == "monthly"){
+                    //calculate total quantity to this point
+                    let quantity = 0;
+                    let testDate = new Date();
+                    testDate.setFullYear(progressDays[i].date.substring(0,4));
+                    testDate.setMonth(parseInt(progressDays[i].date.substring(5,7)) - 1);
+                    testDate.setDate(progressDays[i].date.substring(8,10));
+                    testDate.setDate(1);
+                    testDate.setHours(0);
+                    const month = testDate.getMonth();
+                    while(month == testDate.getMonth()){
+                        quantity += goals[goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
+                        testDate.setDate(testDate.getDate() + 1);
+                    }
+                    if(quantity >= goals[goalType][j].quantity)
+                        progressDays[i].children[goalIndex].style.backgroundColor = goals[goalType][j]["progressColor"];
+                    else
+                        progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
+                }
+                else if(goalType == "yearly"){
+                    //calculate total quantity to this point
+                    let quantity = 0;
+                    let testDate = new Date();
+                    testDate.setFullYear(progressDays[i].date.substring(0,4));
+                    testDate.setMonth(parseInt(progressDays[i].date.substring(5,7)) - 1);
+                    testDate.setDate(progressDays[i].date.substring(8,10));
+                    testDate.setDate(1);
+                    testDate.setMonth(0);
+                    testDate.setHours(0);
+                    const year = testDate.getFullYear();
+                    while(year == testDate.getFullYear()){
+                        quantity += goals[goalType][j]["calendarDates"][testDate.toISOString().substring(0,10)] ?? 0;
+                        testDate.setDate(testDate.getDate() + 1);
+                    }
+                    if(quantity >= goals[goalType][j].quantity)
+                        progressDays[i].children[goalIndex].style.backgroundColor = goals[goalType][j]["progressColor"];
+                    else
+                        progressDays[i].children[goalIndex].style.backgroundColor = "transparent";
+                }
+                
                 progressDays[i].children[goalIndex].style.display = goals[goalType][j]["progressToggled"] ? "block" : "none";
                 goalIndex++;
             }
         });
     }
-}
-
-function daysInYear(year) {
-    return ((year % 4 === 0 && year % 100 > 0) || year %400 == 0) ? 366 : 365;
 }
 
 function getInitialMonth(){
@@ -325,13 +393,13 @@ function clickCalendarDay(e){
             goalInputQuantity.onchange = (e) => {
                 if(goalInputQuantity.value == 0)
                     goalToggleInput.checked = false;
-                goals[goalType][i]["calendarDates"][clickedOnDate] = goalInputQuantity.value;
+                goals[goalType][i]["calendarDates"][clickedOnDate] = parseInt(goalInputQuantity.value);
                 saveGoals();
             }
 
             goalToggleInput.onchange= () => {
                 goalInputQuantity.value = goalToggleInput.checked ? goalInputQuantity.value == 0 ? 1 : goalInputQuantity.value : 0;
-                goals[goalType][i]["calendarDates"][clickedOnDate] = goalInputQuantity.value;
+                goals[goalType][i]["calendarDates"][clickedOnDate] = parseInt(goalInputQuantity.value);
                 goalInputQuantity.disabled = !goalToggleInput.checked;
 
                 //change day goal indicators
@@ -414,7 +482,7 @@ function confirmGoal(e){
 
     //edit goals object
     goals[goalInput.goalType][index]["goal"] = goalInput.value;
-    goals[goalInput.goalType][index]["quantity"] = goalQuantityInput.value;
+    goals[goalInput.goalType][index]["quantity"] = parseInt(goalQuantityInput.value);
     saveGoals();
 
     e.target.removeEventListener("focusout", confirmGoal);
