@@ -106,6 +106,11 @@ calendarMonthInput.onchange = () =>{updateCalendar();}
 calendarProgressToggle.onchange = changedCalendarProgressToggle;
 calendarProgressToggle2.onchange = changedCalendarProgressToggle;
 
+progressYearButton.onchange = () => {
+    curCalYear = progressYearButton.value;
+    updateProgress()
+};
+
 //functions
 //uses the given date object and update the calendar
 function changedCalendarProgressToggle(e){
