@@ -1,20 +1,19 @@
 body{
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    background-color: rgb(76, 76, 76);
     box-sizing: border-box;
     height: calc(100% - 16px);
     width: calc(100% - 16px);
-    color:white;
 }
 
-input, select{
+/* input, select{
     color-scheme: dark;
-}
+} */
 
 #calendar-day{
     border-radius: 2px;
     margin:1px;
     overflow: hidden;
+    border: 1px solid black;
 }
 
 .calendar-day-goal-indicator-container{
@@ -31,17 +30,13 @@ input, select{
     background-color: green;
 }
 
-.progress-goal{
-    width: 100%;
-}
-
-.current-cal-day{
+/* .current-cal-day{
     background-color: darkgray;
-}
+} */
 
-.other-cal-day{
+/* .other-cal-day{
     background-color: gray;
-}
+} */
 
 .delete-goal{
     margin: 4px;
@@ -56,7 +51,7 @@ input, select{
 } */
 
 .goal-input-quantity{
-    width: 30px;
+    width: 45px;
     padding:inherit;
     font: inherit;
     /* color: inherit; */
@@ -76,7 +71,7 @@ input, select{
 }
 
 .goal-input{
-    width: calc(100% - 100px);
+    width: calc(100% - 125px);
     margin: 5px 0px 5px 24px;
     padding:inherit;
     font: inherit;
@@ -108,9 +103,16 @@ input[type="color"]::-webkit-color-swatch {
     border: none;
 }
 
+.popup-goal{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .progress-goal{
     display: flex;
     align-items: center;
+    width:100%;
 }
 
 #title{
@@ -122,12 +124,36 @@ input[type="color"]::-webkit-color-swatch {
     display:flex;
 }
 
-#goals-container, #progress-goals-container, #popup-goals-container{
+#goals-container, #progress-goals-container{
     width: 30%;
     height: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+#popup-goals-container{
+    left:0;
+    right:0;
+    transform: translate(-100%, 0);
+    height:min-content;
+    border: 1px solid black;
+    padding: 5px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+}
+
+#popup-goals-container > h2{
+    margin: 5px;
+}
+
+#popup-exit-button{
+    position: absolute;
+    right: 5px;
+    top: 5px;
 }
 
 #goals > h4{
@@ -137,15 +163,29 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #goals{
+    height:100%;
+    border: 1px solid black;
     width: 90%;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    background-color: darkgray;
+    /* background-color: darkgray; */
 }
 
 #calendar, #progress{
     width: 70%;
+}
+
+#progress-year-button{
+    border:none;
+    width: 60px;
+    text-align: center;
+}
+
+#progress-next-year-button, #progress-last-year-button{
+    padding: 5px;
+    border:none;
+    margin: 5px;
 }
 
 #calendar-month-container, #progress-type-container{
@@ -162,7 +202,7 @@ input[type="color"]::-webkit-color-swatch {
 #next-month-button, #last-month-button{
     margin:5px;
     padding: 5px;
-    background-color: lightgray;
+    /* background-color: lightgray; */
     border: none;
 }
 
@@ -218,8 +258,6 @@ input[type="color"]::-webkit-color-swatch {
 
 #cal-popup{
     display: none;
-    justify-content: center;
-    align-items: center;
     width: 100%;
     height: 100%;
     position: absolute;
@@ -228,10 +266,12 @@ input[type="color"]::-webkit-color-swatch {
     top: 0;
 }
 
-#cal-popup > div{
-    width: 50%;
-    height: 100%;
-    background-color: gray;
+#popup-goals{
+    height:100%;
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
 }
 
 

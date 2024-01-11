@@ -25,7 +25,7 @@ const popupGoalsContainer = document.getElementById("popup-goals-container");
 const progressLastYearButton = document.getElementById("progress-last-year-button");
 const progressNextYearButton = document.getElementById("progress-next-year-button");
 const progressYearButton = document.getElementById("progress-year-button");
-
+const popupExitButton = document.getElementById("popup-exit-button");
 //global variables
 // localStorage.setItem("goals", JSON.stringify({
 //     "YYYY":{
@@ -429,6 +429,10 @@ function clickCalendarDay(e){
     const clickedOnDate = target.calDate;
     calPopup.style.display = "flex";
 
+    //position the popup
+    popupGoalsContainer.style.top = Math.min(e.clientY, document.body.offsetHeight - popupGoalsContainer.offsetHeight) + "px";
+    popupGoalsContainer.style.left = Math.max(e.clientX,popupGoalsContainer.offsetWidth) + "px";
+
     popupDailyProgressGoalList.innerHTML = '';
     popupWeeklyProgressGoalList.innerHTML = '';
     popupMonthlyProgressGoalList.innerHTML = '';
@@ -438,7 +442,7 @@ function clickCalendarDay(e){
     ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
         for(let i = 0; i < goals[curCalYear][goalType].length; i++){
             let goal = document.createElement("div");
-            goal.className="progress-goal";
+            goal.className="popup-goal";
     
             let goalToggleInput = document.createElement("input");
             goalToggleInput.type = "checkbox";
@@ -476,9 +480,13 @@ function clickCalendarDay(e){
     
             let goalText = document.createElement("span");
             goalText.innerHTML = goals[curCalYear][goalType][i]["goal"];
-    
-            goal.appendChild(goalToggleInput);
-            goal.appendChild(goalText);
+            
+            let goalChildDiv = document.createElement("div");
+            
+            goalChildDiv.appendChild(goalToggleInput);
+            goalChildDiv.appendChild(goalText);
+
+            goal.appendChild(goalChildDiv);
             goal.appendChild(goalInputQuantity);
             
             switch(goalType){
@@ -690,6 +698,7 @@ function randomColor(){
 }
 
 //closes the cal popup on click
+popupExitButton.onclick = clickmeParent;
 calPopup.onclick = clickmeParent;
 function clickmeParent(e){
     calPopup.style.display = "none";
