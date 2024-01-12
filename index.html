@@ -16,7 +16,9 @@
         <h1 id="title">New Years Resolutions Tracker</h1>
         <div id="goals-calendar-container">
             <div id="goals-container">
-                <h2>Goals</h2>
+                <div class="goals-title">
+                    <h2>Goals</h2>
+                </div>
                 <div id="goals">
                     <h4>Daily</h4>
                     <div class="goal-list">
@@ -46,21 +48,22 @@
                         <option value="progress">Progress View</option>
                     </select>
                 </div>
-                <div id="week-names">
-                    <div>Sunday</div>
-                    <div>Monday</div>
-                    <div>Tuesday</div>
-                    <div>Wednesday</div>
-                    <div>Thursday</div>
-                    <div>Friday</div>
-                    <div>Saturday</div>
+                <div id="calendar-grid">
+                    <div class="day-of-week-name">Sunday</div>
+                    <div class="day-of-week-name">Monday</div>
+                    <div class="day-of-week-name">Tuesday</div>
+                    <div class="day-of-week-name">Wednesday</div>
+                    <div class="day-of-week-name">Thursday</div>
+                    <div class="day-of-week-name">Friday</div>
+                    <div class="day-of-week-name">Saturday</div>
                 </div>
-                <div id="calendar-grid"></div>
             </div>
         </div>
         <div id="progress-calendar-container">
             <div id="progress-goals-container">
-                <h2>Goals</h2>
+                <div class="goals-title">
+                    <h2>Goals</h2>
+                </div>
                 <div id="goals">
                     <h4>Daily</h4>
                     <div id="daily-progress-goal-list" class="goal-list"></div>
@@ -89,7 +92,9 @@
         <diV id="cal-popup">
             <div id="popup-goals-container">
                 <button id="popup-exit-button">X</button>
-                <h2>Goals</h2>
+                <div class="goals-title">
+                    <h2>Goals</h2>
+                </div>
                 <div id="popup-goals">
                     <h4>Daily</h4>
                     <div id="popup-daily-progress-goal-list" class="goal-list"></div>

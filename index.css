@@ -117,11 +117,13 @@ input[type="color"]::-webkit-color-swatch {
 
 #title{
     text-align: center;
+    height: 35px;
     margin-bottom: 0;
 }
 
 #goals-calendar-container{
     display:flex;
+    max-height: calc(100% - 35px);
 }
 
 #goals-container, #progress-goals-container{
@@ -133,6 +135,7 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #popup-goals-container{
+    min-width: 300px;
     left:0;
     right:0;
     transform: translate(-100%, 0);
@@ -189,6 +192,7 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #calendar-month-container, #progress-type-container{
+    height: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -209,7 +213,7 @@ input[type="color"]::-webkit-color-swatch {
 #calendar-month{
     text-align: center;
     width: 20%;
-
+    min-width: 140px;
     background: none;
 	color: inherit;
 	border: none;
@@ -231,11 +235,20 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #calendar-grid{
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: calc(100% - 60px);
+    aspect-ratio: 7/6;
     margin: auto;
     display: grid;
-    grid-template: repeat(6,1fr) / repeat(7, 1fr);
+    grid-template: 30px 1fr 1fr 1fr 1fr 1fr 1fr / repeat(7, 1fr);
+}
+
+.day-of-week-name{
+    text-align: center;
+}
+
+.goals-title{
+    height: 60px;
 }
 
 #progress-calendar-container{

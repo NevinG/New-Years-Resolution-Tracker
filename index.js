@@ -135,7 +135,10 @@ function updateCalendar(){
     curCalYear = newDate.getFullYear();
 
     //reset them all
-    calendarGrid.innerHTML = null;
+    while(calendarGrid.children.length > 7){
+        calendarGrid.children[7].remove();
+    }
+
     for(let i = 0; i < 42; i++){
         let calDay = document.createElement("div");
         calDay.id = "calendar-day";
@@ -153,21 +156,21 @@ function updateCalendar(){
     let lastIndex;
     for(let month = date.getMonth(); date.getMonth() == month; date.setDate(date.getDate() + 1)){
         lastIndex = firstDay - 1 + date.getDate();
-        days[lastIndex].innerHTML = day;
-        days[lastIndex].className = "current-cal-day";
-        days[lastIndex].calDate = date.toISOString().substring(0,10);
+        days[7 + lastIndex].innerHTML = day;
+        days[7 + lastIndex].className = "current-cal-day";
+        days[7 + lastIndex].calDate = date.toISOString().substring(0,10);
         day++;
 
         const calendarDaysGoalIndicatorContainer = document.createElement("div");
         calendarDaysGoalIndicatorContainer.className = "calendar-day-goal-indicator-container";
-        days[lastIndex].appendChild(calendarDaysGoalIndicatorContainer);
+        days[7 + lastIndex].appendChild(calendarDaysGoalIndicatorContainer);
         ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
             if(goals[curCalYear]){
                 for(let j = 0; j < goals[curCalYear][goalType].length; j++){
-                    if((goals[curCalYear][goalType][j]["calendarDates"][days[lastIndex].calDate] ?? 0) > 0){
+                    if((goals[curCalYear][goalType][j]["calendarDates"][days[ 7 + lastIndex].calDate] ?? 0) > 0){
                         const childDiv = document.createElement("div");
                         childDiv.className = "calendar-day-goal-indicator";
-                        days[lastIndex].children[0].appendChild(childDiv);
+                        days[7 + lastIndex].children[0].appendChild(childDiv);
                     }
                 }
             }
@@ -176,20 +179,20 @@ function updateCalendar(){
     //add to days after
     day = 1;
     for(let i = lastIndex + 1; i < 42; i++){
-        days[i].innerHTML = day;
-        days[i].className = "other-cal-day";
-        days[i].calDate = date.toISOString().substring(0,10);
-        days[i].onclick = undefined;
+        days[7 + i].innerHTML = day;
+        days[7 + i].className = "other-cal-day";
+        days[7 + i].calDate = date.toISOString().substring(0,10);
+        days[7 + i].onclick = undefined;
         date.setDate(date.getDate() + 1);
         day++;
     }
     //add to days before
     for(let i = firstDay - 1; i >= 0; i--){
         firstDate.setDate(firstDate.getDate() - 1);
-        days[i].innerHTML = firstDate.getDate();
-        days[i].calDate = firstDate.toISOString().substring(0,10);
-        days[i].onclick = undefined;
-        days[i].className = "other-cal-day";
+        days[7 + i].innerHTML = firstDate.getDate();
+        days[7 + i].calDate = firstDate.toISOString().substring(0,10);
+        days[7 + i].onclick = undefined;
+        days[7 + i].className = "other-cal-day";
     }
 
     loadGoals();
