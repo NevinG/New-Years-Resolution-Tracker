@@ -63,6 +63,7 @@ body{
 .goal-input-quantity-popup{
     width: 45px;
     margin-left: 40px;
+    padding:inherit;
     font: inherit;
     /* color: inherit; */
     /* background-color: inherit; */
@@ -104,6 +105,7 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .popup-goal{
+    margin:2px 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -128,13 +130,13 @@ input[type="color"]::-webkit-color-swatch {
 
 #goals-container, #progress-goals-container{
     width: 30%;
-    height: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 #popup-goals-container{
+    border-radius: 10px;
     min-width: 300px;
     left:0;
     right:0;
@@ -163,6 +165,16 @@ input[type="color"]::-webkit-color-swatch {
     margin-top: 10px;
     margin-bottom: 0;
     margin-left: 5px;
+}
+
+#popup-goals > h4{
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+#progress-goals > h4{
+    margin-top: 10px;
+    margin-bottom: 0;
 }
 
 #goals{
@@ -236,9 +248,9 @@ input[type="color"]::-webkit-color-swatch {
 
 #calendar-grid{
     max-width: 100%;
+    margin:auto;
     max-height: calc(100% - 60px);
-    aspect-ratio: 7/6;
-    margin: auto;
+    aspect-ratio: 7/6.3;
     display: grid;
     grid-template: 30px 1fr 1fr 1fr 1fr 1fr 1fr / repeat(7, 1fr);
 }
@@ -287,4 +299,15 @@ input[type="color"]::-webkit-color-swatch {
     flex-direction: column;
 }
 
+@media only screen and (max-aspect-ratio: 1){
+    #goals-calendar-container, #progress-calendar-container{
+        flex-direction:column;
+    }
+    #calendar, #progress{
+        width: 100%;
+    }
+    #goals-container, #progress-goals-container{
+        width: 100%;
+    }
+}
 

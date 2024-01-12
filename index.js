@@ -26,6 +26,15 @@ const progressLastYearButton = document.getElementById("progress-last-year-butto
 const progressNextYearButton = document.getElementById("progress-next-year-button");
 const progressYearButton = document.getElementById("progress-year-button");
 const popupExitButton = document.getElementById("popup-exit-button");
+const popupDailyGoalTitle = document.getElementById("popup-daily-goal-title");
+const popupWeeklyGoalTitle = document.getElementById("popup-weekly-goal-title");
+const popupMonthlyGoalTitle = document.getElementById("popup-monthly-goal-title");
+const popupYearlyGoalTitle = document.getElementById("popup-yearly-goal-title");
+const dailyProgressGoalTitle = document.getElementById("daily-progress-goal-title");
+const weeklyProgressGoalTitle = document.getElementById("weekly-progress-goal-title");
+const monthlyProgressGoalTitle = document.getElementById("monthly-progress-goal-title");
+const yearlyProgressGoalTitle = document.getElementById("yearly-progress-goal-title");
+
 //global variables
 // localStorage.setItem("goals", JSON.stringify({
 //     "YYYY":{
@@ -204,6 +213,10 @@ function updateProgress(){
     weeklyProgressGoalList.innerHTML = '';
     monthlyProgressGoalList.innerHTML = '';
     yearlyProgressGoalList.innerHTML = '';
+    dailyProgressGoalTitle.style.display = "none";
+    weeklyProgressGoalTitle.style.display = "none";
+    monthlyProgressGoalTitle.style.display = "none";
+    yearlyProgressGoalTitle.style.display = "none";
     ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
         if(goals[curCalYear]){
             for(let i = 0; i < goals[curCalYear][goalType].length; i++){
@@ -238,15 +251,19 @@ function updateProgress(){
                 
                 switch(goalType){
                     case "daily":
+                        dailyProgressGoalTitle.style.display = "block";
                         dailyProgressGoalList.appendChild(goal);
                         break;
                     case "weekly":
+                        weeklyProgressGoalTitle.style.display = "block";
                         weeklyProgressGoalList.appendChild(goal);
                         break;
                     case "monthly":
+                        monthlyProgressGoalTitle.style.display = "block";
                         monthlyProgressGoalList.appendChild(goal);
                         break;
                     case "yearly":
+                        yearlyProgressGoalTitle.style.display = "block";
                         yearlyProgressGoalList.appendChild(goal);
                         break;
                 };
@@ -447,6 +464,11 @@ function clickCalendarDay(e){
     popupYearlyProgressGoalList.innerHTML = '';
     
     //add goals to the popup
+    popupDailyGoalTitle.style.display = "none";
+    popupWeeklyGoalTitle.style.display = "none";
+    popupMonthlyGoalTitle.style.display = "none";
+    popupYearlyGoalTitle.style.display = "none";
+
     ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
         for(let i = 0; i < goals[curCalYear][goalType].length; i++){
             let goal = document.createElement("div");
@@ -499,15 +521,19 @@ function clickCalendarDay(e){
             
             switch(goalType){
                 case "daily":
+                    popupDailyGoalTitle.style.display = "block";
                     popupDailyProgressGoalList.appendChild(goal);
                     break;
                 case "weekly":
+                    popupWeeklyGoalTitle.style.display = "block";
                     popupWeeklyProgressGoalList.appendChild(goal);
                     break;
                 case "monthly":
+                    popupMonthlyGoalTitle.style.display = "block";
                     popupMonthlyProgressGoalList.appendChild(goal);
                     break;
                 case "yearly":
+                    popupYearlyGoalTitle.style.display = "block";
                     popupYearlyProgressGoalList.appendChild(goal);
                     break;
             };
