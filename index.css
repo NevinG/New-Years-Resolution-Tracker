@@ -125,7 +125,7 @@ input[type="color"]::-webkit-color-swatch {
 
 #goals-calendar-container{
     display:flex;
-    max-height: calc(100% - 35px);
+    height: calc(100% - 35px);
 }
 
 #goals-container, #progress-goals-container{
@@ -247,15 +247,19 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #calendar-grid{
-    max-width: 100%;
+    width: 100%;
     margin:auto;
-    max-height: calc(100% - 60px);
-    aspect-ratio: 7/6.3;
+    height: calc(100% - 30px);
     display: grid;
     grid-template: 30px 1fr 1fr 1fr 1fr 1fr 1fr / repeat(7, 1fr);
 }
 
-.day-of-week-name{
+.short-name{
+    text-align: center;
+    display: none;
+}
+
+.long-name{
     text-align: center;
 }
 
@@ -308,6 +312,17 @@ input[type="color"]::-webkit-color-swatch {
     }
     #goals-container, #progress-goals-container{
         width: 100%;
+    }
+    #calendar-day{
+        aspect-ratio: 1;
+    }
+
+    .short-name{
+        display: block;
+    }
+    
+    .long-name{
+        display: none;
     }
 }
 
