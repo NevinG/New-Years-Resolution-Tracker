@@ -592,7 +592,7 @@ function loadGoals(){
     //daily
     for(let i = 0; i < goals[curCalYear]["daily"].length; i++){
         let goal = document.createElement("p");
-        goal.innerHTML = goals[curCalYear]["daily"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["daily"][i]["goal"];
+        goal.innerHTML = goals[curCalYear]["daily"][i]["goal"] == '' ? "" : goals[curCalYear]["daily"][i]["goal"];
         let goalColorInput = document.createElement("input");
         goalColorInput.type = "color";
         goalColorInput.className = "goal-color-picker"; 
@@ -611,7 +611,7 @@ function loadGoals(){
     //weekly
     for(let i = 0; i < goals[curCalYear]["weekly"].length; i++){
         let goal = document.createElement("p");
-        goal.innerHTML = goals[curCalYear]["weekly"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["weekly"][i]["goal"];
+        goal.innerHTML = goals[curCalYear]["weekly"][i]["goal"] == '' ? "" : goals[curCalYear]["weekly"][i]["goal"];
         let goalColorInput = document.createElement("input");
         goalColorInput.type = "color";
         goalColorInput.className = "goal-color-picker"; 
@@ -630,7 +630,7 @@ function loadGoals(){
     //monthly
     for(let i = 0; i < goals[curCalYear]["monthly"].length; i++){
         let goal = document.createElement("p");
-        goal.innerHTML = goals[curCalYear]["monthly"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["monthly"][i]["goal"];
+        goal.innerHTML = goals[curCalYear]["monthly"][i]["goal"] == '' ? "" : goals[curCalYear]["monthly"][i]["goal"];
         let goalColorInput = document.createElement("input");
         goalColorInput.type = "color";
         goalColorInput.className = "goal-color-picker"; 
@@ -649,7 +649,7 @@ function loadGoals(){
     //yearly
     for(let i = 0; i < goals[curCalYear]["yearly"].length; i++){
         let goal = document.createElement("p");
-        goal.innerHTML = goals[curCalYear]["yearly"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["yearly"][i]["goal"];
+        goal.innerHTML = goals[curCalYear]["yearly"][i]["goal"] == '' ? "" : goals[curCalYear]["yearly"][i]["goal"];
         let goalColorInput = document.createElement("input");
         goalColorInput.type = "color";
         goalColorInput.className = "goal-color-picker"; 
@@ -681,7 +681,7 @@ function confirmGoal(e){
 
     e.target.removeEventListener("focusout", confirmGoal);
     let confirmedGoal = document.createElement("p");
-    confirmedGoal.innerHTML = goalInput.value == '' ? "new goal" : goalInput.value;
+    confirmedGoal.innerHTML = goalInput.value == '' ? "" : goalInput.value;
     let goalColorInput = document.createElement("input");
         goalColorInput.type = "color";
         goalColorInput.className = "goal-color-picker"; 
@@ -715,6 +715,7 @@ function editGoal(e){
     newGoal.appendChild(newGoalDelete);
 
     newGoalInput.className = "goal-input";
+    newGoalInput.placeholder = "new goal"
     newGoalInput.value = e.target.textContent;
     newGoalInput.addEventListener("change", confirmGoal);
     newGoalInput.addEventListener("focusout", confirmGoal);
@@ -768,7 +769,7 @@ function saveGoals(){
 
 function clickAddDailyGoal(){
     let goal = document.createElement("p");
-    goal.innerHTML = "new goal";
+    goal.innerHTML = "";
     let goalColorInput = document.createElement("input");
         goalColorInput.type = "color";
         goalColorInput.className = "goal-color-picker"; 
@@ -787,7 +788,7 @@ function clickAddDailyGoal(){
     if(!goals[curCalYear]){
         goals[curCalYear] = JSON.parse(JSON.stringify(defaultYearlyGoalsObject));
     }
-    goals[curCalYear]["daily"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    goals[curCalYear]["daily"].push({goal: '', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
     goalColorInput.value = goals[curCalYear]["daily"][goals[curCalYear]["daily"].length - 1]["progressColor"];
     saveGoals();
     goal.click();
@@ -795,7 +796,7 @@ function clickAddDailyGoal(){
 
 function clickAddWeeklyGoal(){
     let goal = document.createElement("p");
-    goal.innerHTML = "new goal";
+    goal.innerHTML = "";
     let goalColorInput = document.createElement("input");
         goalColorInput.type = "color";
         goalColorInput.className = "goal-color-picker"; 
@@ -811,7 +812,7 @@ function clickAddWeeklyGoal(){
     addWeeklyGoal.parentElement.insertBefore(goal, addWeeklyGoal);
 
     //add in goals object
-    goals[curCalYear]["weekly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    goals[curCalYear]["weekly"].push({goal: '', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
     goalColorInput.value = goals[curCalYear]["weekly"][goals[curCalYear]["weekly"].length - 1]["progressColor"];
     saveGoals();
     goal.click();
@@ -819,7 +820,7 @@ function clickAddWeeklyGoal(){
 
 function clickAddMonthlyGoal(){
     let goal = document.createElement("p");
-    goal.innerHTML = "new goal";
+    goal.innerHTML = "";
     let goalColorInput = document.createElement("input");
         goalColorInput.type = "color";
         goalColorInput.className = "goal-color-picker"; 
@@ -835,7 +836,7 @@ function clickAddMonthlyGoal(){
     addMonthlyGoal.parentElement.insertBefore(goal, addMonthlyGoal);
 
     //add in goals object
-    goals[curCalYear]["monthly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    goals[curCalYear]["monthly"].push({goal: '', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
     goalColorInput.value = goals[curCalYear]["monthly"][goals[curCalYear]["monthly"].length - 1]["progressColor"];
     saveGoals();
     goal.click();
@@ -843,7 +844,7 @@ function clickAddMonthlyGoal(){
 
 function clickAddYearLongGoal(){
     let goal = document.createElement("p");
-    goal.innerHTML = "new goal";
+    goal.innerHTML = "";
     let goalColorInput = document.createElement("input");
         goalColorInput.type = "color";
         goalColorInput.className = "goal-color-picker"; 
@@ -859,7 +860,7 @@ function clickAddYearLongGoal(){
     addYearLongGoal.parentElement.insertBefore(goal, addYearLongGoal);
 
     //add in goals object
-    goals[curCalYear]["yearly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    goals[curCalYear]["yearly"].push({goal: '', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
     goalColorInput.value = goals[curCalYear]["yearly"][goals[curCalYear]["yearly"].length - 1]["progressColor"];
     saveGoals();
     goal.click();
