@@ -138,6 +138,32 @@ function changedCalendarProgressToggle(e){
     calendarProgressToggle.value = e.target.value;
 }
 
+function updateCalendarContentColors(){
+    //add content to the respective days of the month
+    const days = calendarGrid.children;
+    let date = new Date(calendarMonthInput.value + "-01T08:00:00.000Z");
+    const firstDay = date.getDay();
+    let lastIndex;
+    for(let month = date.getMonth(); date.getMonth() == month; date.setDate(date.getDate() + 1)){
+        lastIndex = firstDay - 1 + date.getDate();
+        let i = 0;
+
+        days[7 + lastIndex].children[0].innerHTML = '';
+        ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
+            if(goals[curCalYear]){
+                for(let j = 0; j < goals[curCalYear][goalType].length; j++){
+                    if((goals[curCalYear][goalType][j]["calendarDates"][days[ 7 + lastIndex].calDate] ?? 0) > 0){
+                        const childDiv = document.createElement("div");
+                        childDiv.className = "calendar-day-goal-indicator";
+                        childDiv.style.backgroundColor = goals[curCalYear][goalType][j]["progressColor"];
+                        days[7 + lastIndex].children[0].appendChild(childDiv);
+                    }
+                }
+            }
+        });
+    }
+}
+
 function updateCalendar(){
     //get new year of the calendar
     let newDate = new Date(calendarMonthInput.value + "-01T08:00:00.000Z");
@@ -173,18 +199,8 @@ function updateCalendar(){
         const calendarDaysGoalIndicatorContainer = document.createElement("div");
         calendarDaysGoalIndicatorContainer.className = "calendar-day-goal-indicator-container";
         days[7 + lastIndex].appendChild(calendarDaysGoalIndicatorContainer);
-        ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
-            if(goals[curCalYear]){
-                for(let j = 0; j < goals[curCalYear][goalType].length; j++){
-                    if((goals[curCalYear][goalType][j]["calendarDates"][days[ 7 + lastIndex].calDate] ?? 0) > 0){
-                        const childDiv = document.createElement("div");
-                        childDiv.className = "calendar-day-goal-indicator";
-                        days[7 + lastIndex].children[0].appendChild(childDiv);
-                    }
-                }
-            }
-        });
     }
+
     //add to days after
     day = 1;
     for(let i = lastIndex + 1; i < 42; i++){
@@ -204,6 +220,7 @@ function updateCalendar(){
         days[7 + i].className = "other-cal-day";
     }
 
+    updateCalendarContentColors();
     loadGoals();
 }
 
@@ -307,7 +324,7 @@ function updateProgress(){
     updateProgressGoals();
 }
 
-//TODO
+
 function updateProgressGoals(){
     const progressDays = progressGrid.children;
     for(let i = 0; i < progressDays.length; i++){
@@ -470,73 +487,86 @@ function clickCalendarDay(e){
     popupYearlyGoalTitle.style.display = "none";
 
     ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
-        for(let i = 0; i < goals[curCalYear][goalType].length; i++){
-            let goal = document.createElement("div");
-            goal.className="popup-goal";
-    
-            let goalToggleInput = document.createElement("input");
-            goalToggleInput.type = "checkbox";
-            goalToggleInput.checked = (goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] ?? 0) > 0; //TODO logic for this
-            goalToggleInput.goalType = goalType;
-            goalToggleInput.goalIndex = i;
+        if(goals[curCalYear]){
+            for(let i = 0; i < goals[curCalYear][goalType].length; i++){
+                let goal = document.createElement("div");
+                goal.className="popup-goal";
+        
+                let goalToggleInput = document.createElement("input");
+                goalToggleInput.type = "checkbox";
+                goalToggleInput.checked = (goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] ?? 0) > 0;
 
-            let goalInputQuantity = document.createElement("input");
-            goalInputQuantity.className = "goal-input-quantity-popup";
-            goalInputQuantity.type = "number";
-            goalInputQuantity.value = goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] ?? 0
-            goalInputQuantity.disabled = !goalToggleInput.checked;
-            goalInputQuantity.onchange = (e) => {
-                if(goalInputQuantity.value == 0)
-                    goalToggleInput.checked = false;
-                    goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] = parseInt(goalInputQuantity.value);
-                saveGoals();
-            }
 
-            goalToggleInput.onchange= () => {
-                goalInputQuantity.value = goalToggleInput.checked ? goalInputQuantity.value == 0 ? 1 : goalInputQuantity.value : 0;
-                goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] = parseInt(goalInputQuantity.value);
+                goalToggleInput.goalType = goalType;
+                goalToggleInput.goalIndex = i;
+
+                let goalInputQuantity = document.createElement("input");
+                goalInputQuantity.className = "goal-input-quantity-popup";
+                goalInputQuantity.type = "number";
+                goalInputQuantity.value = goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] ?? 0
                 goalInputQuantity.disabled = !goalToggleInput.checked;
-
-                //change day goal indicators
-                if(goalInputQuantity.disabled){
-                    target.children[0].children[0].remove()
-                }else{
-                    const childDiv = document.createElement("div");
-                    childDiv.className = "calendar-day-goal-indicator";
-                    target.children[0].appendChild(childDiv);
+                goalInputQuantity.onchange = (e) => {
+                    if(goalInputQuantity.value == 0)
+                        goalToggleInput.checked = false;
+                        goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] = parseInt(goalInputQuantity.value);
+                    saveGoals();
                 }
-                saveGoals();
-            };
-    
-            let goalText = document.createElement("span");
-            goalText.innerHTML = goals[curCalYear][goalType][i]["goal"];
-            
-            let goalChildDiv = document.createElement("div");
-            
-            goalChildDiv.appendChild(goalToggleInput);
-            goalChildDiv.appendChild(goalText);
 
-            goal.appendChild(goalChildDiv);
-            goal.appendChild(goalInputQuantity);
-            
-            switch(goalType){
-                case "daily":
-                    popupDailyGoalTitle.style.display = "block";
-                    popupDailyProgressGoalList.appendChild(goal);
-                    break;
-                case "weekly":
-                    popupWeeklyGoalTitle.style.display = "block";
-                    popupWeeklyProgressGoalList.appendChild(goal);
-                    break;
-                case "monthly":
-                    popupMonthlyGoalTitle.style.display = "block";
-                    popupMonthlyProgressGoalList.appendChild(goal);
-                    break;
-                case "yearly":
-                    popupYearlyGoalTitle.style.display = "block";
-                    popupYearlyProgressGoalList.appendChild(goal);
-                    break;
-            };
+
+                goalToggleInput.onchange= () => {
+
+                    goalInputQuantity.value = goalToggleInput.checked ? goalInputQuantity.value == 0 ? 1 : goalInputQuantity.value : 0;
+                    goals[curCalYear][goalType][i]["calendarDates"][clickedOnDate] = parseInt(goalInputQuantity.value);
+                    goalInputQuantity.disabled = !goalToggleInput.checked;
+
+                    //change day goal indicators
+                    target.children[0].innerHTML = '';
+                    ["daily", "weekly", "monthly", "yearly"].forEach(goalType => {
+                        if(goals[curCalYear]){
+                            for(let j = 0; j < goals[curCalYear][goalType].length; j++){
+                                if((goals[curCalYear][goalType][j]["calendarDates"][clickedOnDate] ?? 0) > 0){
+                                    const childDiv = document.createElement("div");
+                                    childDiv.className = "calendar-day-goal-indicator";
+                                    childDiv.style.backgroundColor = goals[curCalYear][goalType][j]["progressColor"];
+                                    target.children[0].appendChild(childDiv);
+                                }
+                            }
+                        }
+                    });
+
+                    saveGoals();
+                };
+        
+                let goalText = document.createElement("span");
+                goalText.innerHTML = goals[curCalYear][goalType][i]["goal"];
+                
+                let goalChildDiv = document.createElement("div");
+                
+                goalChildDiv.appendChild(goalToggleInput);
+                goalChildDiv.appendChild(goalText);
+
+                goal.appendChild(goalChildDiv);
+                goal.appendChild(goalInputQuantity);
+                
+                switch(goalType){
+                    case "daily":
+                        popupDailyGoalTitle.style.display = "block";
+                        popupDailyProgressGoalList.appendChild(goal);
+                        break;
+                    case "weekly":
+                        popupWeeklyGoalTitle.style.display = "block";
+                        popupWeeklyProgressGoalList.appendChild(goal);
+                        break;
+                    case "monthly":
+                        popupMonthlyGoalTitle.style.display = "block";
+                        popupMonthlyProgressGoalList.appendChild(goal);
+                        break;
+                    case "yearly":
+                        popupYearlyGoalTitle.style.display = "block";
+                        popupYearlyProgressGoalList.appendChild(goal);
+                        break;
+                };
+            }
         }
     });
 }
@@ -563,6 +593,17 @@ function loadGoals(){
     for(let i = 0; i < goals[curCalYear]["daily"].length; i++){
         let goal = document.createElement("p");
         goal.innerHTML = goals[curCalYear]["daily"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["daily"][i]["goal"];
+        let goalColorInput = document.createElement("input");
+        goalColorInput.type = "color";
+        goalColorInput.className = "goal-color-picker"; 
+        goalColorInput.value = goals[curCalYear]["daily"][i]["progressColor"];
+        goalColorInput.onchange = (e) => {
+            goals[curCalYear]["daily"][i]["progressColor"] = e.target.value;
+            saveGoals();
+            updateCalendarContentColors();
+        }
+        goalColorInput.onclick = (e) => {e.stopPropagation()};
+        goal.appendChild(goalColorInput);
         goal.onclick = editGoal;
         goal.goalType = "daily";
         addDailyGoal.parentElement.insertBefore(goal, addDailyGoal);
@@ -571,6 +612,17 @@ function loadGoals(){
     for(let i = 0; i < goals[curCalYear]["weekly"].length; i++){
         let goal = document.createElement("p");
         goal.innerHTML = goals[curCalYear]["weekly"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["weekly"][i]["goal"];
+        let goalColorInput = document.createElement("input");
+        goalColorInput.type = "color";
+        goalColorInput.className = "goal-color-picker"; 
+        goalColorInput.value = goals[curCalYear]["weekly"][i]["progressColor"];
+        goalColorInput.onchange = (e) => {
+            goals[curCalYear]["weekly"][i]["progressColor"] = e.target.value;
+            saveGoals();
+            updateCalendarContentColors();
+        }
+        goalColorInput.onclick = (e) => {e.stopPropagation()};
+        goal.appendChild(goalColorInput);
         goal.onclick = editGoal;
         goal.goalType = "weekly";
         addWeeklyGoal.parentElement.insertBefore(goal, addWeeklyGoal);
@@ -579,6 +631,17 @@ function loadGoals(){
     for(let i = 0; i < goals[curCalYear]["monthly"].length; i++){
         let goal = document.createElement("p");
         goal.innerHTML = goals[curCalYear]["monthly"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["monthly"][i]["goal"];
+        let goalColorInput = document.createElement("input");
+        goalColorInput.type = "color";
+        goalColorInput.className = "goal-color-picker"; 
+        goalColorInput.value = goals[curCalYear]["monthly"][i]["progressColor"];
+        goalColorInput.onchange = (e) => {
+            goals[curCalYear]["monthly"][i]["progressColor"] = e.target.value;
+            saveGoals();
+            updateCalendarContentColors();
+        }
+        goalColorInput.onclick = (e) => {e.stopPropagation()};
+        goal.appendChild(goalColorInput);
         goal.onclick = editGoal;
         goal.goalType = "monthly";
         addMonthlyGoal.parentElement.insertBefore(goal, addMonthlyGoal);
@@ -587,6 +650,17 @@ function loadGoals(){
     for(let i = 0; i < goals[curCalYear]["yearly"].length; i++){
         let goal = document.createElement("p");
         goal.innerHTML = goals[curCalYear]["yearly"][i]["goal"] == '' ? "new goal" : goals[curCalYear]["yearly"][i]["goal"];
+        let goalColorInput = document.createElement("input");
+        goalColorInput.type = "color";
+        goalColorInput.className = "goal-color-picker"; 
+        goalColorInput.value = goals[curCalYear]["yearly"][i]["progressColor"];
+        goalColorInput.onchange = (e) => {
+            goals[curCalYear]["yearly"][i]["progressColor"] = e.target.value;
+            saveGoals();
+            updateCalendarContentColors();
+        }
+        goalColorInput.onclick = (e) => {e.stopPropagation()};
+        goal.appendChild(goalColorInput);
         goal.onclick = editGoal;
         goal.goalType = "yearly";
         addYearLongGoal.parentElement.insertBefore(goal, addYearLongGoal);
@@ -608,6 +682,17 @@ function confirmGoal(e){
     e.target.removeEventListener("focusout", confirmGoal);
     let confirmedGoal = document.createElement("p");
     confirmedGoal.innerHTML = goalInput.value == '' ? "new goal" : goalInput.value;
+    let goalColorInput = document.createElement("input");
+        goalColorInput.type = "color";
+        goalColorInput.className = "goal-color-picker"; 
+        goalColorInput.value = goals[curCalYear][goalInput.goalType][index]["progressColor"];
+        goalColorInput.onchange = (e) => {
+            goals[curCalYear][goalInput.goalType][index]["progressColor"] = e.target.value;
+            saveGoals();
+            updateCalendarContentColors();
+        }
+        goalColorInput.onclick = (e) => {e.stopPropagation()};
+        confirmedGoal.appendChild(goalColorInput);
     confirmedGoal.onclick = editGoal;
     confirmedGoal.goalType = goalInput.goalType;
     
@@ -630,7 +715,7 @@ function editGoal(e){
     newGoal.appendChild(newGoalDelete);
 
     newGoalInput.className = "goal-input";
-    newGoalInput.value = e.target.innerHTML;
+    newGoalInput.value = e.target.textContent;
     newGoalInput.addEventListener("change", confirmGoal);
     newGoalInput.addEventListener("focusout", confirmGoal);
     newGoalInput.goalType = e.target.goalType;
@@ -673,6 +758,8 @@ function deleteGoal(e){
     //remove from goals object
     goals[curCalYear][e.target.goalType].splice(index,1);
     saveGoals();
+
+    updateCalendarContentColors();
 }
 
 function saveGoals(){
@@ -682,6 +769,16 @@ function saveGoals(){
 function clickAddDailyGoal(){
     let goal = document.createElement("p");
     goal.innerHTML = "new goal";
+    let goalColorInput = document.createElement("input");
+        goalColorInput.type = "color";
+        goalColorInput.className = "goal-color-picker"; 
+        goalColorInput.onchange = (e) => {
+            goals[curCalYear][goalInput.goalType][index]["progressColor"] = e.target.value;
+            saveGoals();
+            updateCalendarContentColors();
+        }
+        goalColorInput.onclick = (e) => {e.stopPropagation()};
+        goal.appendChild(goalColorInput);
     goal.onclick = editGoal;
     goal.goalType = "daily";
     addDailyGoal.parentElement.insertBefore(goal, addDailyGoal);
@@ -691,40 +788,81 @@ function clickAddDailyGoal(){
         goals[curCalYear] = JSON.parse(JSON.stringify(defaultYearlyGoalsObject));
     }
     goals[curCalYear]["daily"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    goalColorInput.value = goals[curCalYear]["daily"][goals[curCalYear]["daily"].length - 1]["progressColor"];
     saveGoals();
+    goal.click();
 }
 
 function clickAddWeeklyGoal(){
     let goal = document.createElement("p");
     goal.innerHTML = "new goal";
+    let goalColorInput = document.createElement("input");
+        goalColorInput.type = "color";
+        goalColorInput.className = "goal-color-picker"; 
+        goalColorInput.onchange = (e) => {
+            goals[curCalYear][goalInput.goalType][index]["progressColor"] = e.target.value;
+            saveGoals();
+            updateCalendarContentColors();
+        }
+        goalColorInput.onclick = (e) => {e.stopPropagation()};
+        goal.appendChild(goalColorInput);
     goal.onclick = editGoal;
     goal.goalType = "weekly";
     addWeeklyGoal.parentElement.insertBefore(goal, addWeeklyGoal);
 
     //add in goals object
     goals[curCalYear]["weekly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    goalColorInput.value = goals[curCalYear]["weekly"][goals[curCalYear]["weekly"].length - 1]["progressColor"];
+    saveGoals();
+    goal.click();
 }
 
 function clickAddMonthlyGoal(){
     let goal = document.createElement("p");
     goal.innerHTML = "new goal";
+    let goalColorInput = document.createElement("input");
+        goalColorInput.type = "color";
+        goalColorInput.className = "goal-color-picker"; 
+        goalColorInput.onchange = (e) => {
+            goals[curCalYear][goalInput.goalType][index]["progressColor"] = e.target.value;
+            saveGoals();
+            updateCalendarContentColors();
+        }
+        goalColorInput.onclick = (e) => {e.stopPropagation()};
+        goal.appendChild(goalColorInput);
     goal.onclick = editGoal;
     goal.goalType = "monthly";
     addMonthlyGoal.parentElement.insertBefore(goal, addMonthlyGoal);
 
     //add in goals object
     goals[curCalYear]["monthly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    goalColorInput.value = goals[curCalYear]["monthly"][goals[curCalYear]["monthly"].length - 1]["progressColor"];
+    saveGoals();
+    goal.click();
 }
 
 function clickAddYearLongGoal(){
     let goal = document.createElement("p");
     goal.innerHTML = "new goal";
+    let goalColorInput = document.createElement("input");
+        goalColorInput.type = "color";
+        goalColorInput.className = "goal-color-picker"; 
+        goalColorInput.onchange = (e) => {
+            goals[curCalYear][goalInput.goalType][index]["progressColor"] = e.target.value;
+            saveGoals();
+            updateCalendarContentColors();
+        }
+        goalColorInput.onclick = (e) => {e.stopPropagation()};
+        goal.appendChild(goalColorInput);
     goal.onclick = editGoal;
     goal.goalType = "yearly";
     addYearLongGoal.parentElement.insertBefore(goal, addYearLongGoal);
 
     //add in goals object
     goals[curCalYear]["yearly"].push({goal: 'new goal', quantity: 1, progressColor: randomColor(), progressToggled: true, calendarDates:{}});
+    goalColorInput.value = goals[curCalYear]["yearly"][goals[curCalYear]["yearly"].length - 1]["progressColor"];
+    saveGoals();
+    goal.click();
 }
 
 function randomColor(){
