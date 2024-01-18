@@ -5,6 +5,11 @@ body{
     width: calc(100% - 16px);
 }
 
+/* this is required to make it work in firefox */
+html{
+    height:100%;
+}
+
 /* input, select{
     color-scheme: dark;
 } */
@@ -32,11 +37,11 @@ body{
 }
 
 /* .current-cal-day{
-    background-color: darkgray;
-} */
+    font-weight: bold;
+} 
 
-/* .other-cal-day{
-    background-color: gray;
+ .other-cal-day{
+    font-weight: normal;
 } */
 
 .delete-goal{
