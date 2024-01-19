@@ -410,5 +410,18 @@ input[type="color"]::-webkit-color-swatch {
     .goal-input, .goal-input-quantity{
         font-size: 1.5em;
     }
+    #popup-goals-container{
+        min-width: 75%;
+    }
+    #popup-goals-container >span{
+        font-size: 2em;
+    }
+    input[type='checkbox'] { 
+        width: 15px;
+        height: 15px;
+    }
+    input[type='number'] { 
+        font-size: 1.5em;
+    }
 }
 
