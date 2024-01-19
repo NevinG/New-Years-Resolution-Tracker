@@ -309,6 +309,30 @@ input[type="color"]::-webkit-color-swatch {
     flex-direction: column;
 }
 
+#login-container{
+    position: absolute;
+    right:0;
+    top:0;
+    margin:5px;
+}
+
+#view-profile-button{
+    display: none;
+}
+
+#sign-in-button{
+    display: block;
+}
+
+#sign-out-button{
+    display: none;
+}
+
+#profile-container{
+    display:none;
+}
+
+
 @media only screen and (max-aspect-ratio: 1){
     #goals-calendar-container, #progress-calendar-container{
         flex-direction:column;
@@ -329,6 +353,62 @@ input[type="color"]::-webkit-color-swatch {
     
     .long-name{
         display: none;
+    }
+
+    h1{
+        font-size: 3em;
+    }
+
+    .goals-title{
+        visibility: hidden;
+    }
+
+    #goals{
+        width: 100%;
+    }
+
+    #calendar-month-container{
+        height: auto;
+    }
+
+    select {
+        font-size: 2em;
+    }
+
+    #calendar-month{
+        width: auto;
+        font-size: 2em;
+    }
+    button{
+        font-size: 1.5em;
+    }
+    #calendar-progress-toggle{
+        margin-left:20px;
+    }
+    #progress-year-button{
+        font-size: 2em;
+        width: auto;
+    }
+    h4{
+        font-size: 2em;
+    }
+    p{
+        font-size: 1.5em;
+    }
+    span{
+        font-size: 1.5em;
+    }
+    #progress-grid{
+        grid-template:repeat(27,1fr) / repeat(14, 1fr)
+    }
+    #progress-type-container{
+        margin: 25px 5px 25px 5px;
+    }
+    input{
+        font-size: 1.5em;
+    }
+    .goal-input, .goal-input-quantity{
+        font-size: 1.5em;
     }
 }
 

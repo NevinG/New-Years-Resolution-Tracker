@@ -92,11 +92,39 @@ const defaultYearlyGoalsObject = {
 }
 let curCalYear = undefined;
 
-let goals = JSON.parse(localStorage.getItem("goals")) ?? {};
-//console.log(goals);
+let goals = {}
+
+auth.onAuthStateChanged(user => {
+    retrieveGoals();
+});
+
+async function retrieveGoals(){
+    let user = firebase.auth().currentUser;
+    if(user){
+        const docRef = db.collection('users').doc(user.uid);
+        const doc = await docRef.get();
+        if(doc.exists){
+            goals = doc.data();
+        }else{
+            //set the goals in the database to the local storage if user is signing in for first time
+            goals = JSON.parse(localStorage.getItem("goals")) ?? {};
+            if(JSON.parse(localStorage.getItem("goals")) != undefined){
+                saveGoals();
+            }
+        }
+        //remove data from local storage
+        localStorage.removeItem("goals");
+    }else{//not logged in
+        goals = JSON.parse(localStorage.getItem("goals")) ?? {};
+    }
+
+    //get current date
+    getInitialMonth();
+}
 
 //get current date
 getInitialMonth();
+
 
 //event-handlers
 lastMonth.onclick = clickLastMonth;
@@ -789,7 +817,13 @@ function deleteGoal(e){
 }
 
 function saveGoals(){
-    localStorage.setItem("goals", JSON.stringify(goals));
+    //logged in
+    user = firebase.auth().currentUser;
+    if(user){
+        db.collection('users').doc(user.uid).set(goals);
+    }else{//not logged in
+        localStorage.setItem("goals", JSON.stringify(goals));
+    }
 }
 
 function clickAddDailyGoal(){
