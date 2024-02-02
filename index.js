@@ -222,7 +222,7 @@ function updateCalendar(){
         }else{
             days[7 + lastIndex].style.border = null;
         }
-        days[7 + lastIndex].style.border = "2px solid black";
+        //days[7 + lastIndex].style.border = "2px solid black";
         days[7 + lastIndex].innerHTML = day;
         days[7 + lastIndex].className = "current-cal-day";
         days[7 + lastIndex].calDate = date.toISOString().substring(0,10);
@@ -238,7 +238,7 @@ function updateCalendar(){
     for(let i = lastIndex + 1; i < 42; i++){
         days[7 + i].innerHTML = day;
         days[7 + i].className = "other-cal-day";
-        days[7 + i].style.border = "1px solid black";
+        //days[7 + i].style.border = "1px solid black";
         days[7 + i].calDate = date.toISOString().substring(0,10);
         date.setDate(date.getDate() + 1);
         day++;
@@ -253,7 +253,7 @@ function updateCalendar(){
         days[7 + i].innerHTML = firstDate.getDate();
         days[7 + i].calDate = firstDate.toISOString().substring(0,10);
         days[7 + i].className = "other-cal-day";
-        days[7 + i].style.border = "1px solid black";
+        //days[7 + i].style.border = "1px solid black";
 
         const calendarDaysGoalIndicatorContainer = document.createElement("div");
         calendarDaysGoalIndicatorContainer.className = "calendar-day-goal-indicator-container";

@@ -36,11 +36,14 @@
 
 <body>
     <div id="app-container">
-        <h1 id="title">Goals Tracker</h1>
-        <div id="login-container">
-            <button id="sign-in-button">Sign In With Google</button>
-            <button id="view-profile-button">View Profile</button>
-            <button id="sign-out-button">Sign Out</button>
+        <div id="header">
+            <svg style="width: 25px; height: 25px; margin-right: 5px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M448 256A192 192 0 1 0 64 256a192 192 0 1 0 384 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 80a80 80 0 1 0 0-160 80 80 0 1 0 0 160zm0-224a144 144 0 1 1 0 288 144 144 0 1 1 0-288zM224 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg>
+            <span id="title">Goals Tracker</span>
+            <div id="login-container">
+                <button id="sign-in-button">Sign In With Google</button>
+                <button id="view-profile-button">View Profile</button>
+                <button id="sign-out-button">Sign Out</button>
+            </div>
         </div>
         <div id="goals-calendar-container">
             <div id="goals-container">
@@ -77,31 +80,31 @@
                     </select>
                 </div>
                 <div id="calendar-grid">
-                    <div>
+                    <div class="weekday-name">
                         <div class="long-name">Sunday</div>
                         <div class="short-name">S</div>
                     </div>
-                    <div>
+                    <div class="weekday-name">
                         <div class="long-name">Monday</div>
                         <div class="short-name">M</div>
                     </div>
-                    <div>
+                    <div class="weekday-name">
                         <div class="long-name">Tuesday</div>
                         <div class="short-name">T</div>
                     </div>
-                    <div>
+                    <div class="weekday-name">
                         <div class="long-name">Wednesday</div>
                         <div class="short-name">W</div>
                     </div>
-                    <div>
+                    <div class="weekday-name">
                         <div class="long-name">Thursday</div>
                         <div class="short-name">T</div>
                     </div>
-                    <div>
+                    <div class="weekday-name">
                         <div class="long-name">Friday</div>
                         <div class="short-name">F</div>
                     </div>
-                    <div>
+                    <div class="weekday-name">
                         <div class="long-name">Saturday</div>
                         <div class="short-name">S</div>
                     </div>
